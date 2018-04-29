@@ -1,17 +1,11 @@
 package com.tase.activemq.jms;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
 import javax.jms.JMSException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,16 +32,12 @@ public class App {
             String inputdata = "/eodata/Sentinel-1/SAR/SLC/2017/09/19/S1A_IW_SLC__1SDV_20170919T015059_20170919T015126_018438_01F0B6_3C7C.SAFE/";
             String outputdata = "/target/processed";
 
-            String baseCommand = "/root/go/bin/jaas run -m /eodata/=/eodata -m /DEM/=/root/.snap/auxdata/dem -m ~/target/=/target -i thalesaleniaspace/snap --timeout 600s --command";
-            String command = "gpt -c 8G -q 12 /S1_Cal_Deb_ML_Spk_TC_cmd.xml -Poutputdata=" + outputdata
-                    + " -Pinputdata=" + inputdata;
-
+            String baseCommand = "docker run --rm -v /eodata/Sentinel-1/SAR/SLC/2017/09/19:/eodata:ro -v /DEM:/root/.snap/auxdata/dem:ro -v /tmp:/target -t thalesaleniaspace/snap gpt -c 8G -q 12 /S1_Cal_Deb_ML_Spk_TC_cmd.xml -Poutputdata=/target/processed -Pinputdata=/eodata/S1A_IW_SLC__1SDV_20170919T015059_20170919T015126_018438_01F0B6_3C7C.SAFE";
             ArrayList<String> commandList = new ArrayList<String>();
             commandList.addAll(Arrays.asList(baseCommand.split(" ")));
-            commandList.add(command);
-
-            ProcessBuilder builder = new ProcessBuilder(commandList);
             
+            ProcessBuilder builder = new ProcessBuilder(commandList);
+            builder.redirectErrorStream(true);
             //For setting environment data
 //            Map<String, String> environ = builder.environment();
 
