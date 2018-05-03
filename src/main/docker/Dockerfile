@@ -1,7 +1,5 @@
 FROM centos
 
-ADD maven/queue-worker.jar /opt/queue-worker.jar
-
 RUN yum install -y java-1.8.0-openjdk \
                    yum-utils \
                    device-mapper-persistent-data \
@@ -10,6 +8,7 @@ RUN yum install -y java-1.8.0-openjdk \
     yum install -y docker-ce git &&\
     yum clean all
 
+ADD maven/queue-worker.jar /opt/queue-worker.jar
 RUN chmod +x /opt/queue-worker.jar
 
 CMD ["java", "-jar", "/opt/queue-worker.jar"]
